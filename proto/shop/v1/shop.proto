@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package shop.v1;
+
+option go_package = "github.com/hjosugi/grpc/go/gen/shop/v1;shopv1";
+option java_package = "dev.hjosugi.grpc.proto";
+option java_multiple_files = true;
+
+// The same contract is implemented by all three servers.
+service ShopService {
+  rpc GetOrder(GetOrderRequest) returns (Order);
+  rpc PayOrder(PayOrderRequest) returns (Payment);
+  rpc ListOrders(ListOrdersRequest) returns (stream Order);
+  rpc SummarizeOrders(stream GetOrderRequest) returns (OrderSummary);
+  // One lookup response per request. This is not a live subscription.
+  rpc TrackPayments(stream GetPaymentRequest) returns (stream Payment);
+}
+
+message GetOrderRequest { string order_id = 1; }
+message ListOrdersRequest { string customer_id = 1; }
+message GetPaymentRequest { string payment_id = 1; }
+
+message Order {
+  string order_id = 1;
+  string customer_id = 2;
+  string product_name = 3;
+  uint32 quantity = 4;
+  int64 unit_price_yen = 5;
+  int64 total_yen = 6;
+}
+
+// Also used as the shared fixture file format (Protobuf JSON).
+message OrdersFixture { repeated Order orders = 1; }
+
+message PayOrderRequest {
+  string order_id = 1;
+  // Demo methods: card, bank_transfer, declined. No real payments.
+  string payment_method = 2;
+  string idempotency_key = 3;
+}
+
+enum PaymentStatus {
+  PAYMENT_STATUS_UNSPECIFIED = 0;
+  PAYMENT_STATUS_PAID = 1;
+}
+
+message Payment {
+  string payment_id = 1;
+  string order_id = 2;
+  int64 amount_yen = 3;
+  PaymentStatus status = 4;
+}
+
+message OrderSummary {
+  uint32 order_count = 1;
+  int64 total_yen = 2;
+}

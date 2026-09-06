@@ -1,0 +1,7 @@
+{
+  "orders": [
+    {"order_id":"ord-1001","customer_id":"customer-001","product_name":"Keyboard","quantity":1,"unit_price_yen":"9800","total_yen":"9800"},
+    {"order_id":"ord-1002","customer_id":"customer-001","product_name":"Mouse","quantity":2,"unit_price_yen":"3500","total_yen":"7000"},
+    {"order_id":"ord-1003","customer_id":"customer-002","product_name":"Monitor","quantity":1,"unit_price_yen":"42000","total_yen":"42000"}
+  ]
+}

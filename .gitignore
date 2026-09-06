@@ -1,0 +1,11 @@
+.tools/
+.run/
+node_modules/
+dist/
+target/
+go/gen/
+go/bin/
+typescript/src/generated/
+*.log
+.env
+__pycache__/

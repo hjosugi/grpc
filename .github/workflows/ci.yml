@@ -1,0 +1,53 @@
+name: gRPC examples
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-go@v7
+        with:
+          go-version: '1.27.1'
+          cache-dependency-path: go/go.sum
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+          cache-dependency-path: java/pom.xml
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: typescript/package-lock.json
+      - name: Install Protocol Buffers compiler
+        run: sudo apt-get update && sudo apt-get install -y protobuf-compiler build-essential
+      - name: Install pinned code generators and dependencies
+        run: python3 scripts/dev.py setup
+      - name: Check Go formatting
+        run: test -z "$(gofmt -l go/cmd go/internal)"
+      - name: Run language tests
+        run: python3 scripts/dev.py test
+      - name: Build all clients and servers
+        run: python3 scripts/dev.py build
+      - name: Verify all nine client-server pairs
+        run: python3 scripts/dev.py interop
+      - name: Print integration logs on failure
+        if: failure()
+        run: |
+          if [ -d .run ]; then
+            for log in .run/*.log; do
+              [ -f "$log" ] && cat "$log"
+            done
+          fi

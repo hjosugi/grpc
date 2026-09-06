@@ -1,0 +1,30 @@
+{
+  "name": "@hjosugi/grpc-typescript",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "NestJS gRPC shop server and client using a shared contract",
+  "engines": {"node": ">=24.0.0"},
+  "scripts": {
+    "generate": "proto-loader-gen-types --keepCase --longs=String --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=src/generated ../proto/shop/v1/shop.proto",
+    "build": "npm run generate && tsc -p tsconfig.json",
+    "start": "node dist/src/main.js",
+    "client": "node dist/src/client.js",
+    "test": "npm run build && node --test dist/test/*.test.js",
+    "contract": "node --test dist/test/contract.test.js"
+  },
+  "dependencies": {
+    "@nestjs/common": "12.0.1",
+    "@nestjs/core": "12.0.1",
+    "@nestjs/microservices": "12.0.1",
+    "@grpc/grpc-js": "1.14.4",
+    "@grpc/proto-loader": "0.8.1",
+    "reflect-metadata": "0.2.2",
+    "rxjs": "7.8.2"
+  },
+  "devDependencies": {
+    "@nestjs/testing": "12.0.1",
+    "@types/node": "24.3.0",
+    "typescript": "5.9.3"
+  }
+}
